@@ -32,10 +32,18 @@ public class UserController {
         Users u = this.userRepo.findByEmail(user.getEmail());
         if (u != null) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
-            // throw new RuntimeException("Email already exists");
         }
 
         this.userRepo.save(user);
         return ResponseEntity.status(HttpStatus.CREATED).body("User registered successfully");
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody Users user) {
+        Users u = this.userRepo.findByEmail(user.getEmail());
+        if (u != null && u.getPassword().equals(user.getPassword())) {
+            return ResponseEntity.ok(u);
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password");
     }
 }
